@@ -1,4 +1,4 @@
-package ba.unsa.etf.rpr.adventOfCode;
+package ba.unsa.etf.rpr.adventOfCode.Day11;
 
 
 import java.math.BigInteger;
@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class Main {
+public class Zadatak2 {
     public static class Coordinate {
         private int x;
         private int y;
