@@ -1,4 +1,4 @@
-package ba.unsa.etf.rpr.adventOfCode;
+package ba.unsa.etf.rpr.adventOfCode.Day11;
 
 
 import java.math.BigInteger;
@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class Main {
+public class Zadatak1 {
     public static class Seats {
         private List<String> seats;
 
