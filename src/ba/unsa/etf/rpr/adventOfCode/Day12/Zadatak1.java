@@ -1,11 +1,11 @@
-package ba.unsa.etf.rpr.adventOfCode;
+package ba.unsa.etf.rpr.adventOfCode.Day12;
 
 import java.util.*;
 import java.lang.*;
 
 import static java.lang.Math.abs;
 
-public class Main {
+public class Zadatak1 {
 
     public static class Side {
         char character;
