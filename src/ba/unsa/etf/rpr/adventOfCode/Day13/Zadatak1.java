@@ -1,8 +1,8 @@
-package ba.unsa.etf.rpr.adventOfCode;
+package ba.unsa.etf.rpr.adventOfCode.Day13;
 
 import java.math.BigInteger;
 import java.util.*;
-public class Main {
+public class Zadatak1 {
 
     public static class BusLine {
         int id;
