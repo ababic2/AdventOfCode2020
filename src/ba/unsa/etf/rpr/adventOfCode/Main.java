@@ -52,7 +52,6 @@ public class Main {
 
         GameMap gameMap = new GameMap(input);
         gameMap.letsPlay(30000000);
-//        console.log(g.lastNumber);
         System.out.println(gameMap.getLastNumber());
     }
 }
