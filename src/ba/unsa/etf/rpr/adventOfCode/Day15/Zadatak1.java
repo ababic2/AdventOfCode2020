@@ -1,6 +1,5 @@
-package ba.unsa.etf.rpr.adventOfCode.Day14;
+package ba.unsa.etf.rpr.adventOfCode.Day15;
 
-import java.math.BigInteger;
 import java.util.*;
 public class Zadatak1 {
 

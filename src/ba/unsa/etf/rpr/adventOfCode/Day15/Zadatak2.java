@@ -1,7 +1,7 @@
-package ba.unsa.etf.rpr.adventOfCode;
+package ba.unsa.etf.rpr.adventOfCode.Day15;
 
 import java.util.*;
-public class Main {
+public class Zadatak2 {
 
     public static class GameMap {
         private List<Integer> input;
@@ -52,7 +52,6 @@ public class Main {
 
         GameMap gameMap = new GameMap(input);
         gameMap.letsPlay(30000000);
-//        console.log(g.lastNumber);
         System.out.println(gameMap.getLastNumber());
     }
 }
