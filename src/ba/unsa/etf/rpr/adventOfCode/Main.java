@@ -1,5 +1,9 @@
 package ba.unsa.etf.rpr.adventOfCode;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,274 +11,453 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    public static class Pair {
-        private Field field;
-        private int index;
-
-        public Pair(Field field, int index) {
-            this.field = field;
-            this.index = index;
-        }
-
-        public Field getField() {
-            return field;
-        }
-
-        public void setField(Field field) {
-            this.field = field;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
-        public void printPair() {
-            this.field.printField();
-            System.out.println(index);
-        }
-    }
-
-    public static class Field {
-        private String type;
-        private int from_1;
-        private int to_1;
-        private int from_2;
-        private int to_2;
-
-        public Field(String type, int from_1, int to_1, int from_2, int to_2) {
-            this.type = type;
-            this.from_1 = from_1;
-            this.to_1 = to_1;
-            this.from_2 = from_2;
-            this.to_2 = to_2;
-        }
-
-        public int getTo_2() {
-            return to_2;
-        }
-
-        public void setTo_2(int to_2) {
-            this.to_2 = to_2;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public int getFrom_1() {
-            return from_1;
-        }
-
-        public void setFrom_1(int from_1) {
-            this.from_1 = from_1;
-        }
-
-        public int getTo_1() {
-            return to_1;
-        }
-
-        public void setTo_1(int to_1) {
-            this.to_1 = to_1;
-        }
-
-        public int getFrom_2() {
-            return from_2;
-        }
-
-        public void setFrom_2(int from_2) {
-            this.from_2 = from_2;
-        }
-
-        public void printField() {
-            System.out.println(type + " " + from_1 + "  " + to_1 + " || " + from_2 + "  " + to_2 );
-        }
-
-    }
-
-    public static class Ticket {
-        private String ticketType;
-        private List<Integer> numbersOnTicket;
-
-        public Ticket(String ticketType, List<Integer> numbersOnTicket) {
-            this.ticketType = ticketType;
-            this.numbersOnTicket = numbersOnTicket;
-        }
-
-        public String getTicketType() {
-            return ticketType;
-        }
-
-        public void setTicketType(String ticketType) {
-            this.ticketType = ticketType;
-        }
-
-        public List<Integer> getNumbersOnTicket() {
-            return numbersOnTicket;
-        }
-
-        public void setNumbersOnTicket(List<Integer> numbersOnTicket) {
-            this.numbersOnTicket = numbersOnTicket;
-        }
-
-        public void printTicket() {
-            System.out.println(ticketType);
-            numbersOnTicket.forEach(System.out::println);
-        }
-    }
-
     static String input() {
-        return "class: 0-1 or 4-19\n" +
-                "row: 0-5 or 8-19\n" +
-                "seat: 0-13 or 16-19\n" +
-                "\n" +
-                "your ticket:\n" +
-                "11,12,13\n" +
-                "\n" +
-                "nearby tickets:\n" +
-                "3,9,18\n" +
-                "15,1,5\n" +
-                "5,14,9";
+        return "4 * 5 + 7 * 2 + 8\n" +
+                "((3 * 6 + 2) * 7 + (5 * 4 + 6 + 8)) + 2 * 7 * 5\n" +
+                "((5 + 9) + 6) + 6\n" +
+                "(9 + 3 + 3 + 3) + (2 + (6 * 2 * 3) + 5 * 5) + 3 + (2 * 3 * 6 * 4 * 3 * (7 + 4)) * 6 * 6\n" +
+                "(4 + (3 * 2 * 8 * 4 + 5 * 8)) + 3 * 9\n" +
+                "(3 * 9 * 7 * 6 * 3 + 9) * 9\n" +
+                "8 + 6 + 7 * 2 * 9 * 3\n" +
+                "(6 * 3 * 8 + (7 + 8 * 3)) * 4 * (3 + 3 * 2 * 8 * 8)\n" +
+                "(8 + 2 * (2 + 2)) * 2 * 9 * 7 * 3 * (9 * 4 + 6 * 9 + 2 * 7)\n" +
+                "(4 + 6 * 2 + 8) * 6\n" +
+                "((3 * 7 * 5) * 3) + 3\n" +
+                "((5 * 4 * 9 * 5 * 2 + 2) + 5 * 9 * 7 * 9 + 5) * 9 + 9\n" +
+                "7 + 7 * 7 * (4 * (5 + 5 + 9 * 7 * 5) * 3 * 8)\n" +
+                "3 + (7 * 7 * (3 * 2 * 8)) + 7 + 5\n" +
+                "3 * 9 + 5 * 7 + 5 * 6\n" +
+                "5 * 5 * (9 * 4 + (6 + 4)) * 6 + 3 * 8\n" +
+                "2 + (9 * 7 * 5 + 4) + 3 * (2 * 8 * 2 + 7 + (5 * 8 * 4 * 3) + 2)\n" +
+                "2 + (7 + 6 + 4 + 3 * 5 * (7 + 6 * 9 * 3 * 6 + 7))\n" +
+                "(5 + 7 + 3 * (5 * 3 * 4 * 5) + 2 * 2) * 6 + (9 + 4 + (4 + 9 + 2 + 3) + 7 * 4 + (8 + 8)) + 6 + (7 + (5 + 2) + 2 * 8 + 9)\n" +
+                "5 * 4 * 5 + 8 * (4 * 4 * 4)\n" +
+                "2 + 8 + 8\n" +
+                "2 + ((7 + 5 + 8 * 6) * 6 * 8 + 4 + 8) * 6 * 6 + (4 * 8 + 8 + 4 + 5 * 2) + (2 + 8 * 6)\n" +
+                "(3 + (2 * 7) * 6 * 2 + (5 + 7 * 3 * 2 * 4)) + (7 * 7 * 7 + 7 + 6 * 8) + (6 * 2 * (7 + 7 + 8) + 7 * 7) * 2 + 5 + 4\n" +
+                "6 + 9 + 3 * ((2 * 3 * 8 + 6) * 8 * 2 + 6)\n" +
+                "5 + 7 * (5 + 9 + (6 + 7) + 2 * 9 * 9) + 9 + (7 + 6 + (8 * 5) + 9 * 6 * 3) * 2\n" +
+                "((6 * 3 + 8 * 5) + 8 * (3 + 8 * 7)) * (2 + 9 * 2 * 8 + 3) * 8 * 5 + 3\n" +
+                "8 * 6 + 2 * (7 * (8 * 9 + 7 + 4) + 9)\n" +
+                "6 * (2 + (5 + 6 * 2 * 8) + 4 * (4 + 6)) * ((2 * 7 + 6 + 7 * 6 + 6) * 5 * 5 + (3 * 8 + 9) * 3 * 8)\n" +
+                "8 * 2 * (2 + 4) * 8 * (7 + (4 * 8))\n" +
+                "(4 + 8 * 3 + 4) + (2 * 8 * 9)\n" +
+                "3 + (7 * 6) * 3 + 5 * 4\n" +
+                "4 * (2 * (8 + 3 * 7 * 5 + 7 * 2) + 3 * 5 + 8 + 3)\n" +
+                "(9 * (7 + 8 + 7) * 5) + 8 + 3\n" +
+                "5 * 8 + 8 * 3 * 2 + 4\n" +
+                "(7 * (9 + 8 + 3 + 7 * 4) + 8 * (2 * 5 * 6) * 5 * (4 + 7 * 4 + 9)) * 2 * 8\n" +
+                "8 * 7 * 7 * 8 + ((4 * 9 + 8) * 2 + 4 * 8)\n" +
+                "5 + (4 * 4 * 4 + 4 * (2 + 4 + 4 * 2 * 5 + 9) + 6) + 9 * 5\n" +
+                "8 * 9 + 8 * ((2 + 6 * 8 + 5 + 7) + (7 + 3 + 4) * 7) + (6 + 7 * 3 + (5 + 4 + 3 * 4 + 9) + 7 + 7) * (7 + 9 * 9 * (6 + 9 + 2 * 7) + 7 + 8)\n" +
+                "8 * (4 * 3 + 9 + 8) * 8 * 2 + 9\n" +
+                "(3 * 6 + 6 + 6 + 9) + 6 * 2 + 4 * 2 * 7\n" +
+                "2 + 7 + (2 + (4 + 2 * 3 + 7 + 8 + 3) + 2) * 6\n" +
+                "9 * (6 + 5 * 4 * (6 * 3) + (4 * 7 + 7) + (8 + 6 + 3 + 2 * 6 * 5)) + 4 + ((5 * 4 * 7) + 6 + 7 * (6 + 5 * 9 * 8)) + 4 * 4\n" +
+                "7 * 6 * 3 * 2\n" +
+                "7 * (3 + 8 * 8) + (3 * (7 + 8 * 3) * (8 + 9 * 4 * 9 * 6) + 8 * 7 * 3) * 4\n" +
+                "6 * 5 * 6 * (7 * 7 + 6 * 8) * 3 * 2\n" +
+                "6 * 6 + ((6 * 7 + 4) + 4) + 6\n" +
+                "7 * 8 * 8 + 9 * 9 + (6 * (3 * 6 + 3))\n" +
+                "2 + 5 * (7 + 3 + (5 + 6 + 2 * 4 * 3) + 9 + 4) + 3 + (9 * 2 + 4 + 4 * 9) * (4 + 7 * (4 * 2) * 3 * 9 * 5)\n" +
+                "(8 + 7 * (9 * 6 * 3 + 6)) + (4 + 9 * 6 + 6)\n" +
+                "4 * 6 * 8 * 5 + 8\n" +
+                "3 * ((7 * 5 + 5 + 5) + 5 + 4 * 3 * (2 * 2 + 5 + 5)) * 5\n" +
+                "7 + 5 + 6\n" +
+                "3 + 3 * (7 * 5)\n" +
+                "7 + 2 * (4 * 5 * 7 + 5) * ((8 + 7 * 9) + 3 * 7 + 8) + 4\n" +
+                "8 + ((7 + 8) + (8 * 3 + 7) + (2 * 6 * 7 + 6 * 7 * 7) + 6 + 6) + 8 + 8\n" +
+                "(2 + 8 + (8 * 4) * 6) + (2 * 2 + 8 + 8 * 6)\n" +
+                "9 * 9 * 9 + 4 * 4 * (6 * 6)\n" +
+                "6 * 3 * ((6 + 9 * 7 * 7) * 6 * 5 + 4) * 3\n" +
+                "(3 + 4 * (4 + 8 * 6 + 3 * 2) * 7 * (8 * 4 * 6) * 2) * 2\n" +
+                "3 * 3 * 8 * (8 + 8 * 6 * 7)\n" +
+                "((9 + 9 * 4) + 3 * 3) * 5 + 2\n" +
+                "8 * 2 + 2 * (3 * 6) * 7 + 5\n" +
+                "9 * 2 * 5 + (2 + (2 * 8) * 2 * 8 * 7 * (7 + 7 + 9 + 5)) + 4\n" +
+                "6 + (7 * 5 + 9) * 3 * 3 * 2 * (4 * 3 + 4 + 9 * (9 * 9 * 4 + 7))\n" +
+                "9 * 4\n" +
+                "2 * (6 + 5 + 2 + 6 + 5 * (3 * 6 * 6 * 8 + 8)) + 6\n" +
+                "((4 + 7 * 8) + 3 + 6 * 7 + 4 + 8) * 5\n" +
+                "(5 * 8 + 6 + (7 * 5 + 5) + 6 * 9) + 6\n" +
+                "4 * (9 + 8 * 3 * 9 + 6 + 3) * 7 * (8 + 6)\n" +
+                "7 * 8 * 6 * 4 + (4 * 5)\n" +
+                "5 + 2 + (6 + (9 + 9) + 8) * ((5 * 7 * 3 * 7 + 6 * 6) + (8 + 8 * 7 + 8) * 4 + 6) * 5\n" +
+                "(9 + 7 + 4) + 5 * 6 + 7 * (3 * (3 * 6 + 7) + (6 + 8 + 4 + 7 + 4 + 7)) + (6 + (8 * 2 + 2 + 2))\n" +
+                "(4 * (5 * 8 * 9) * (7 * 3) * 9) * 7 + (3 * (5 * 4 * 2 * 7))\n" +
+                "(2 * 5 + (9 * 3 + 8 * 7 * 5 + 3) * 2 * 7 * (4 + 4)) + (4 * 3 + (8 * 4 * 5 + 6) * (9 + 2 + 4 * 3 + 4 * 9) + 9) + (5 + 3) * 6\n" +
+                "2 + 7 * 3 * (7 + 9) + 9\n" +
+                "(9 * (7 + 2 * 8) + 7 * (6 * 5 + 4 * 4 * 8 * 8)) + ((3 + 3) + (3 + 2 * 3 * 5) + 5 + (2 + 4 * 2) * 2 * (5 + 8 * 3 * 3)) + 2\n" +
+                "7 + (8 + 8 * 3 + 3 * 4 * 4) + 9 + (3 * 9 * 5 + (3 * 2 * 5 + 9 * 6 * 8) * 7 * (5 + 8 + 9 * 7 + 4 + 9))\n" +
+                "(6 + 6 * 3 + 3 * 2) + ((4 + 2) + 9 * (2 * 9 + 3 * 4 * 7) * 2 * 8 * (4 * 5 + 6)) * 9 * 8 + 8\n" +
+                "6 + 2\n" +
+                "4 * ((7 * 6 + 3 + 8 + 4 * 2) + (6 * 4 * 3 * 5 + 2 * 5) * 6 + (7 * 4 + 5) + 3) * 9 * 3 * 2\n" +
+                "3 + ((9 * 6 * 3 * 6) * 4 * 8 + 3) * ((4 + 4 + 9) + 8 * 4 * 7 * 9) * 3\n" +
+                "8 * (6 * 8) * (8 + 3 + 6 + 2)\n" +
+                "8 * 3 * (7 * 3 + 2 + 4 + (8 * 3) + 3)\n" +
+                "3 + 4 * 4 + 7 + (6 * (5 * 5 + 9) + 7)\n" +
+                "(7 * (8 + 8 + 5 * 7 * 2 * 7) + 7 + 7 * 4 * 4) * 2 * 2 + 7 * (4 + (6 + 6 + 6) + 5 * 4) * 6\n" +
+                "9 * 4 * (5 + 2 + 5) * 4 + 3\n" +
+                "(8 + 7 + (9 + 3 * 8 + 4)) + 9\n" +
+                "8 + (6 * 8 * 8 * 8 + 6 * 7) + (7 * 5 * (3 + 7 + 4 * 4 + 2))\n" +
+                "6 + 7 * (3 * 9 + 5 * 6) + (9 * 9) + 5\n" +
+                "3 * 4 * (7 + 8 * 8 * 7) + 2 + 7\n" +
+                "(5 * 6 * 6) + 4 + 2\n" +
+                "(9 + 3 * 8) + 2 * 8 * ((3 + 9 * 6 * 2 + 7) + 7)\n" +
+                "7 * (9 + (2 * 2 + 5 * 3) * 9 * (5 * 6 + 4 + 6 * 7)) * 9 * 9 + 9 + 2\n" +
+                "((3 * 6 + 6 + 7) + 4 + (2 * 4 * 7 * 6) + 9) + 2 + 3\n" +
+                "7 * 9 + 6 + 5 * (9 * (6 * 9 + 4 * 3 * 3 * 7) + 9)\n" +
+                "3 + (6 + 4 * 3 * 6 * (3 + 6)) * 9\n" +
+                "(2 * 5 + 6) * 2 * (5 + (7 * 6 + 3 + 9 + 2)) + 7 * 3\n" +
+                "5 * (9 + 4 * 7 * 4 + 5) * 4\n" +
+                "4 + 9 * (6 * 5 * 7 * 4 * 2) * ((2 + 4 * 3) * 8 * (4 * 6 + 5 + 4 + 2))\n" +
+                "8 + 7\n" +
+                "2 * 9 * (7 * 4 + 4 + 2 + 4 * 4) * 9\n" +
+                "(2 * 3 * 4 * 2) * (5 * 3 * 3 + 3 + 3 + 7) * (2 * 5 + 4 + 3 * 2) * 3\n" +
+                "6 * 4 + (6 + 5 * 4 + 9) + ((7 + 7 * 6 + 3) * 2 + (6 * 8 * 5)) * ((4 * 2) * 5 * 6 * 3 * (6 + 3 * 8) + 3)\n" +
+                "(9 + 4 * 3 * 8) * ((2 * 9 + 2 * 5 + 7 + 3) * 9 + 7 * 2 * 3)\n" +
+                "9 + 9 + 5 * ((4 * 3 * 6 * 4 + 4) + 2 + 2 + 4) + 7\n" +
+                "8 * 6 + 8 * 9 * (5 + 7 + 8 + 9 * 5)\n" +
+                "2 + 3 * 6 * 8 * 4 * (7 * 4 * (2 + 9 * 3 + 7 + 7) + 5)\n" +
+                "(6 + 6 * 5) + 7 + 9 * (3 * 6 + 6 + (5 * 5 + 3 + 5 + 4 * 9)) + 5\n" +
+                "7 * (2 + 5)\n" +
+                "4 * 3 * (3 * 3 * 9 * 5 + 3) + 2 + 8 * 3\n" +
+                "(4 + 4 * 4) + 2 * (9 * (5 * 9 + 6 * 5 * 2 * 9)) * 6 * 8 + (5 + 4 * (5 * 7 * 4 + 2 + 9 * 7) + 4 * 7)\n" +
+                "(7 * (6 * 3 * 2 * 8 * 8)) + (9 * 4 + 5) * 5 * ((5 + 8 * 5 * 6) + 8)\n" +
+                "6 + 3 * 4 + (3 + 2 * 8 + 4) + (6 + 9 + 5)\n" +
+                "8 * 2 + ((5 + 8 * 8 * 8) * (2 + 2 + 9 + 6 + 8 * 2) * 7 * 7 * (4 * 5 * 7 + 7)) * 9\n" +
+                "8 + (2 * 8 * 9 + 6 * 9) + 9 * (9 * 5) + (4 * (7 + 9 * 7 + 5 + 7) + 6 * 6 + 5 * 6)\n" +
+                "6 + (2 + 2) + 2 + (9 * 7 + 8 * 3 * 6 + 3) + 9\n" +
+                "6 + 4 * 8 + ((7 + 8 + 3 * 9 * 6 * 8) + 4 + 5 * (9 * 6 + 3 * 5 + 3)) * 7 + 2\n" +
+                "(7 + 5 + 4 * (5 * 3) + (7 * 5) + (5 * 8 * 2 + 2 * 3 + 2)) * 6 * 5 * 4 + 5\n" +
+                "3 + ((3 + 8 * 8) * 2 * 8 + 8 + (7 + 5 + 5 * 6 + 9)) * (9 + 9 + 9) * 9 * 3\n" +
+                "(6 + 3 + 4) * 5 + 3 + 4 + 8\n" +
+                "((9 + 7 * 9 + 6) + 6 + 9) + 6 * 6 + (4 * 4 + 7) * 6\n" +
+                "6 * 6 + 9 + 3 + 4\n" +
+                "9 * 9 * 7\n" +
+                "5 * ((6 * 6 + 7 + 7) * 8 * 8 + (2 * 8 * 6 + 3 * 7) + (7 + 9 + 8 * 6 + 3)) + 3\n" +
+                "(5 * (3 * 4) * 2 + 5 * (6 + 9)) + 9 * 2\n" +
+                "(8 * (4 + 2) + 5) + 9 + 8\n" +
+                "((4 + 4) * 4 * 4) + (9 * 5 * 9) * 4 * 8 * 9 * 6\n" +
+                "3 * 5 + 8 * 4 * 2 * 7\n" +
+                "2 + (2 + 9) + 2 * 4 + (8 * (6 * 9 * 3 + 2) + 5) + (9 + 2 * (2 + 9 * 9 + 6))\n" +
+                "3 + 6 + 4 * (6 + 4 * 4) + 5\n" +
+                "6 + (6 * 9 * 8 * 6 + (5 * 7 + 4 * 3) * 9) * 2\n" +
+                "(4 * 3 * 2 + 9 + 2) + 8 + 7\n" +
+                "(7 + 7) + 6 + 7\n" +
+                "(6 + (3 + 4)) * 3 * 4 * 4\n" +
+                "2 * (3 * (6 + 8) + (6 + 8 + 8) + 5 + 3 + 9) + 8 * 7\n" +
+                "(8 * (3 + 4) + 8 + 2 * 5 + 2) * 5 + 6 * 9\n" +
+                "6 + (4 * 3 + 8 * 7 * (5 * 8 * 2 + 6 * 9 * 4)) + 7 * 7\n" +
+                "2 + 4 * ((6 * 7 + 7 * 6 + 2 + 8) + 3 + 6 * 2 + (5 + 8 * 9) + 4)\n" +
+                "6 * 3 * (6 + (7 + 6 * 9) * 8 * 9 + 3 * 3) * 4 + (8 * 6 + (2 + 8) + 9) * 7\n" +
+                "6 + ((9 + 7) + 6 + 5 * 6 * (8 + 7)) + 6 + (2 * 9)\n" +
+                "9 + 8 * 3 + (6 * 8 + 5 + 9 * 8) * (9 + 2 + 9 + 3 + 4 * (6 * 9))\n" +
+                "8 + (8 + (8 * 4 * 7 * 8) * (9 * 7 * 2) * 4) * ((9 + 9) + 3 * 4) * 5 + 5 + 3\n" +
+                "9 * (2 + 8 + 3) * 7 * (8 * 7) * 3\n" +
+                "8 + 5 + (2 + 7) * 6\n" +
+                "9 + (3 * 5 * 2 + 9) * 9 + (2 * 9 + 4 + 6 * 7)\n" +
+                "6 + (9 * (9 * 5) + 5 * 8) + 6 + 4 + 3 * 7\n" +
+                "9 * (7 + 4 + 9 * 3 + (5 * 2 + 8) * 4)\n" +
+                "4 * 2 + 2 * 2 + 4 + 3\n" +
+                "(4 + 7 + 6 + 3 * 6) * 6 * 9 * 6\n" +
+                "5 + 7 * 9 * (3 + 3 + 8 + 4 * 7 * 5) + 7 + (3 + 7 + 5 * 5)\n" +
+                "(7 + (8 * 2)) * 3 * 3 + (2 * (3 + 3) * 8 * 4)\n" +
+                "6 + 4 * 7 + ((9 * 2 + 6) + 7 + (9 * 7 + 5 + 5 + 6) + 4 + 9) * 8 + 8\n" +
+                "4 + (2 + 2 + 6 * 2 * (8 * 3 + 4)) + ((2 + 7 + 8 * 5) + 6 + 8 * 4 * 3)\n" +
+                "9 * 8 + 4 * 9 * ((6 * 3) * 5 * 6 * (2 * 5) * 5 * 2) * 9\n" +
+                "9 * (7 + 9 + 3 + 5) + (8 * 3 * 7 * 7 * 9 + 3) * 7 * 5\n" +
+                "4 + (4 + 3) + 6\n" +
+                "9 + (9 + 8 + 5 * 3 * 9 * (8 + 3 * 2 * 9 + 5)) * 8 * 3 + (2 * 3 + (2 * 9 + 4 + 3 * 4) + 5)\n" +
+                "((8 + 8) + (6 + 4 + 2 * 6 * 3)) * 6\n" +
+                "7 + (2 * 6 + 4 + 8 + 8 * 7) * 8 + 7 * 6\n" +
+                "7 + 8 + 4 * (5 * 4 * 9 + 5 + 8) * 3 + 2\n" +
+                "(6 + 5 + 4 + 7 + 4) + 8 + 7 * (7 + (7 * 7) * 4 * 4 + 4 + (9 * 4 * 3 + 9 * 5)) * 7 * 8\n" +
+                "(7 + 3 + (3 + 7 + 8 + 9 * 6) * 9 * 5) * (2 + (3 + 6 + 7 * 2) * (7 * 3) + 9)\n" +
+                "(9 * 7 + (8 + 6 + 2 * 5) * 6 * 9) + 4 + 3\n" +
+                "(8 * (5 + 2 * 2 + 6 + 8 * 9) * (4 + 3 + 7 + 4 * 4 + 6) * 2) + 6 + (5 * 9) + 3 + 9 + (8 + 3 + 9)\n" +
+                "((7 + 3 * 3 + 6) * 8 + 7) * 9 + (2 + 5 + 4)\n" +
+                "(3 * (2 + 8 + 7 + 4 * 2)) + 6 * (9 + 5 * 2 + 5 + 7 * 3)\n" +
+                "(9 * 6 + 6 + 5) + (5 * (4 * 5 * 8 * 2 * 6) + (3 + 6 * 2 * 4 * 5 + 9))\n" +
+                "(7 * (8 * 7 * 6 + 9 * 5) + 3 * 7 * (7 * 9) * 7) * 2 * 4 * 4\n" +
+                "4 + 3 * (2 * (4 + 3 + 6) * 6 + 7 * 3 + (8 * 5 * 6 * 6)) * 7\n" +
+                "9 + (6 * 2 + (3 + 2 * 5 * 6 + 8 + 9) * 8) + ((6 * 3 + 6 * 2 * 4 * 4) * 8 + 5)\n" +
+                "((5 + 6 + 8 + 7 + 2) * 9 + 2) * 7 + 2 + 5\n" +
+                "((9 * 8 + 5 * 3 * 4) * 4 + (9 + 3) + 3 + 6) + 7 * (7 * 4 * 2 + 2 * 9 + 3)\n" +
+                "9 * (4 * 4 + 3 * 2) * 3 + 7 + (2 + 2 * 7) + 2\n" +
+                "4 + 2 * (6 + 7 * (6 * 2 + 7 * 6 * 4)) * (3 + 5 * 7 * (3 * 7 + 8 + 3 + 3) + (3 * 2 * 7))\n" +
+                "7 + 4 + (7 + 8 + 5 + 7 + 5)\n" +
+                "7 + 4 + 8 + ((5 + 2 + 5 * 6 + 5 * 2) + 6 * 8 + 6 + 3 * (6 + 3 * 2 + 8 + 4 + 4)) * 8 * 9\n" +
+                "(3 + 7 + 2 * 4 * (2 * 9 * 7 * 2 * 2 + 3) + (6 * 7 * 2 * 2 + 9 * 4)) + 2\n" +
+                "5 * 2 * (4 * 7 * 7) * 6\n" +
+                "5 * (3 * 8 * (4 * 8 + 8)) * 3 * 9 + 5 * 4\n" +
+                "(6 * 2 * 5 * 4) + ((5 + 7 + 7 + 6 * 9 * 4) * 8 + 4 * 9) * 9 * 4 * 6 * 6\n" +
+                "5 + (7 + 6 + 9) * 9 + 4 + 3 * 8\n" +
+                "2 + (7 + 7) * (7 * 9 + 4) * 7 + ((4 + 7 + 8 * 2 + 3 + 5) * 2 * (8 + 2) * 4 + 4) * 6\n" +
+                "3 + 8 + 5 * (2 + 2) + 9 + (5 + 7 + 2)\n" +
+                "9 * 7 + 4 + (7 + 2 * (4 + 7 * 4 + 9 + 7 + 2)) * (7 + (2 + 7 * 5 * 4 + 9))\n" +
+                "8 * 3 + 5 * 3 * ((2 + 8 + 4 + 7 * 4) * 7 + 3 * 7) + 6\n" +
+                "((7 + 2 * 3 + 9 * 4) * 4 * (5 + 9 + 9) * 9 + (7 * 7)) * 2 + 9\n" +
+                "5 + 4 + 9\n" +
+                "4 * (7 * (4 + 9 + 3 * 7)) * 2\n" +
+                "(5 * 9 * 3) * 4 + (6 + 2 + 7 * (4 + 2) + 2) * (9 + 9 * 8 * 9 + (9 * 3 + 9 + 7 * 2)) + ((3 + 4 + 2 + 3) + 2 * 9 + 6)\n" +
+                "(3 + 3 + 5 * (8 * 9) * 7) + 4 + 7 * 5\n" +
+                "(9 + 3) + 3 * ((5 + 7 * 2 + 6 * 3 + 4) + 6) * 7\n" +
+                "9 + (3 * 5 + 7 + 4) * 5 * 9 * 3 * 4\n" +
+                "5 * ((7 + 7 * 7) + 9 + 2 + 3)\n" +
+                "(9 * 6 * 3 * 5 + 3) * 3 + 8 + 4 + 9 + (3 * (6 + 9 + 8 + 9 * 2 + 4) + 7)\n" +
+                "2 * 4 + 8 * 2 + (2 * 2 + 5 + 3 + 4 * 7) + 9\n" +
+                "(5 + 3) * 4\n" +
+                "(8 + 2 * (8 * 9 + 8 * 4 + 3) * 9 + 8 * 2) + ((5 + 2 * 7 + 8) * 5 * 6) * 3\n" +
+                "2 * 3 + ((4 * 7 + 6 + 2) * 5 * 5 * 7 * (2 + 3 * 6 + 6 + 3 * 3)) + (9 * 8)\n" +
+                "((4 + 4 + 9 * 7 * 4) * (9 * 4 * 5 * 9 + 2 * 7) * 4 + 2 + 6) + 4 + 5\n" +
+                "6 + 8 * 3 * (4 + 5 * 7 * 8 * 4 * 8)\n" +
+                "9 * (5 * 4 + 5) * 8 + 4 + 6 * (5 + 3 + 9 + 4 + 7 + 2)\n" +
+                "4 + (2 * 3 + 8 * 3 + 7 + 2) + 9 + 6\n" +
+                "2 + (6 * 4 * 9 * (6 * 2 * 4 + 4 * 8 + 6) + 6) * 2 + 8 * 5 + 4\n" +
+                "8 * 8 + 6 * (4 + 3 + 3 * 9 * 9 + 9) * (4 * 9 * 6 + 2) * 7\n" +
+                "((3 * 2 * 4 * 8) + 7 + 7 * 6 + (3 * 4)) * 7 * 2 * 7 * 8\n" +
+                "8 + (8 + (2 + 6 * 5) * (9 * 5 * 3 + 8) + 9)\n" +
+                "(2 * 5 + 8 * 3) + 9 * 4 * 9 + 5 * 2\n" +
+                "3 + 9 * (6 * 6 + 8 * 4 + 9) + 4\n" +
+                "(8 * 9) + 4 * 4 + 9 * 3 + (7 * 2 * (3 * 4) * 8 * 8)\n" +
+                "5 * 5 * (9 + 8 * 6 + 3) + 4\n" +
+                "4 + 9 + (4 * 5 + (6 * 7 * 9 + 9) + 5 * 4) * 7 * 4 * 7\n" +
+                "(4 * 2 + (3 + 8) * 6 * 5 + 5) + (9 + 9 + 2 + (2 * 9 * 9 + 9 + 4) + (4 + 6 + 2 + 6)) * 3 + 2\n" +
+                "9 + (5 * 5 * (4 + 3)) + 3 * 9 * 5 + ((3 * 5 + 6) * 7 * 2 + 2 * 3)\n" +
+                "(2 + 6 * 9 + 8) + 3 + (6 + 9 + 4 + 7 * 8)\n" +
+                "6 * 4 * (2 + (4 * 4 + 6 * 9 + 3) + 9 * 9) * 3\n" +
+                "(7 * (2 * 8 * 7 + 8 + 2 + 7) * 7 + 3) + 4 + 3 + 5 * ((4 + 9 + 8 + 7 * 9) + (7 * 5 * 3 + 8 * 8 + 5) * 5) + 8\n" +
+                "((4 * 5 + 8 * 6) * 5 * 9 + 5) + 8 + 5 * 3\n" +
+                "9 * (3 + 2 + (3 + 7) + 7 + (5 + 6 + 6 + 3 + 3)) * 8\n" +
+                "3 + (2 * 8) * ((6 + 9 + 8 * 7) * 9 + 7) * 8 * 2 + 7\n" +
+                "(3 + 8 * 2 + 5 * 2) + 8 * (4 + 4 + 5 * 7) * (4 * 5) * 9\n" +
+                "8 * (6 * (5 + 9 * 3 + 5 + 7) * (5 + 6 * 2 + 3 * 5 + 2) * 2)\n" +
+                "(2 + 3 * 7 * (2 + 7 * 7) + (5 + 2 * 3 * 5 + 7 * 7) + (6 * 9 * 3 * 8 + 7)) + 8 + 3 * 3 * 2 + 9\n" +
+                "5 + 5 + 3\n" +
+                "8 * 6 + 9 + ((9 + 3 + 5 * 3 + 6) + 3 * 6)\n" +
+                "7 * (3 + (5 * 8 * 9) + 5 + 7 + 3) * 3 * 9 * 8\n" +
+                "5 * (3 * 8 * 8)\n" +
+                "8 + 7 * 7 + 5 + (2 + 4) + 8\n" +
+                "2 + 9 * 7 * 6 * 9\n" +
+                "9 + ((8 * 7 * 5 * 8 + 9) + 2 * (7 * 9 + 8 * 4) * 4)\n" +
+                "((9 * 5) + (2 * 3 * 3 + 8 * 4) + (6 + 7 * 4) * 3) + 2\n" +
+                "6 * 5 * 5 + 3\n" +
+                "7 + 9 * 7 * 4 * (3 + (9 + 9 * 5 * 8) + 5 * 9 * (7 * 8 * 9 + 3 * 9 + 3) * 9)\n" +
+                "2 + 6 * 9 + 3 + (7 + 7 + 6 * 3) * 2\n" +
+                "(5 * 4 + 6 + 5 * (2 + 3) * (8 + 3)) + (6 + 9 * 9 + 3 + (6 + 6 * 7 * 3 * 4) * 2) * 7 * 4 + 7 + 5\n" +
+                "2 * (6 * 2 + 8) * 6\n" +
+                "3 + 2 + 3 + ((7 + 3 * 2 + 5) + 4)\n" +
+                "5 + ((3 * 2 * 2 + 4) + 5 * 4 + 3) * 7 + 6 + 7 + 6\n" +
+                "7 + 8 * (6 * 7 * (4 + 6) + (5 * 8 + 4 * 6) + (4 + 4 + 2 * 5 * 7 + 2) + 3)\n" +
+                "9 + ((5 * 5 + 5 + 5 * 6 + 4) * 2 * 9 + (8 * 6 * 3 + 6 * 8) + 8) + 6\n" +
+                "2 + 9 + (6 + 9) * 8 * 3 + 4\n" +
+                "4 * (5 + 9 + 7) * 9 * (6 * 2 + 2 + 9 * 5 + (6 + 9))\n" +
+                "((7 * 6 + 2) + 8 * 5 + 9 + 4 + 4) + 8 * (6 + 7 * 4 * (3 + 5 + 5) + 6 * (6 + 7 + 5 * 4 * 5))\n" +
+                "(7 * 5 + 6) + (6 * 6)\n" +
+                "5 + (6 * 9 + (9 * 3 * 4 + 2 * 8) + 5 + (3 * 9 + 4 * 9 * 7)) + 9 * 8 * 4\n" +
+                "(8 + 8 + 7 * 9) + (8 + 9 + 2) + 4 + 7\n" +
+                "8 + (9 * 3 + 7 + 6 * 7)\n" +
+                "3 * ((4 * 6 + 6 * 9) + 8) + (5 + 6 * 8 * (5 * 2 + 3 + 8) * 3 + 5) + 7 + (3 + 3 * 2 + (4 * 2))\n" +
+                "5 * (2 + (8 * 7) + 2 * 7 * 2) * 3 + 9 + (5 * 5 + 8)\n" +
+                "2 + 4 + (8 * 9 + 9 + (5 * 4) + 8) + 5 * 4\n" +
+                "3 * 3 * (7 * 4 * 4 + (8 * 9 * 7 + 6) * 3 * (9 + 7 + 6 + 6)) * 9\n" +
+                "6 * ((9 * 8 + 9) + 9 * 3 * 5 + (8 + 8 * 2 * 7 * 8 * 4) + 4) + 2 + 2 * 5 * (9 + (2 + 5 * 6 + 7 * 2 + 7) + 5 * 4 + 6 * 3)\n" +
+                "(8 * (3 + 5 * 7 + 6 * 8) + 5 + 4) + 5\n" +
+                "(5 * 2 + (4 * 5 + 7) + (7 + 5 + 5 + 8)) * 2 * ((5 + 7) + 4 * 4) * (8 + (4 * 5 + 8) + 5 + 9 + 8)\n" +
+                "(7 * 8) + 2 + 2 * 4 * 6\n" +
+                "((7 * 8) + 5) + (8 * 2 + 5 + 8) + 3 * ((8 + 7 * 9) * 8 + (8 + 9 * 8 + 2 * 9 + 6)) * 6 * (9 * 6 + (4 + 7) + 7 * (8 + 8 + 8 * 3) * 3)\n" +
+                "3 * ((2 + 3 + 3 * 5 * 6 + 9) * 2 + 3 * 6) * 9 * ((6 * 8) + 6 + (3 * 6 * 3) + (9 + 5 + 6)) + 2\n" +
+                "9 * 3 + 7 * 5 + ((3 * 8 + 4 * 5 * 5) * 5 + 8 * 2 + (2 * 5 * 3 + 5))\n" +
+                "(9 + 7 * 6 * 5 + 6) + 6 + 6 * 9 + 5\n" +
+                "5 * 5 + 6 * 3 * 8 + (4 + 2 * 3 + 5)\n" +
+                "9 + 9 + 6 * (5 + (8 * 9 * 9 + 5 + 8)) * ((9 * 5 * 8 + 8 * 7) * 4 * 9 + (7 + 2 * 5 + 7 * 3)) * (9 + 6)\n" +
+                "7 * (7 + (5 * 7 + 9 + 9 * 7 + 2)) + 3 * (7 + (5 + 8 + 5 * 5 * 4) + 8 + 9) * 5 * 7\n" +
+                "(8 * 8 * 9 + 5 * 5 * 2) * ((8 + 3 + 6 * 3 + 5 + 4) + (4 + 8 * 4) * 6) + ((2 * 7 * 5 * 5) + 9 * 4 + 3) * (6 + 7 * 9 + 3 + 4) * 4\n" +
+                "(2 * 7 * 8 * (7 + 4) + 8 + 7) + 4 * 4 + 7\n" +
+                "6 * 6 + (8 + 2 + 7) * 9 * (5 * (2 * 4 * 8 + 3 + 9))\n" +
+                "(8 * 7 + 7) * (7 * 6 * 3) + 7\n" +
+                "((7 * 5) + 3 + 7 + (3 + 2 * 7 + 9)) + 7 + (4 + (9 * 4))\n" +
+                "3 + 7 + 9 + (2 * 6 * 2 * 5 + 2 + 4) * (6 * 7) + 8\n" +
+                "6 * 4 * 7 * ((6 * 4 * 6 * 8 * 2) * (2 + 6 * 3 + 8 * 2) + 5 + (5 + 3 + 2 + 5 + 9) * (5 * 4))\n" +
+                "8 + 5 + 4 * (8 * 6 + 9 + 7 * (3 + 9 * 9 * 8) + 9) * 4\n" +
+                "2 * 6 + 6 * ((8 * 3 * 7 + 7 + 8 + 3) * 9 + 6 * 8 + 5)\n" +
+                "(3 * 2 + 5 + 5 + 3 * 9) * 5 * 7 + (9 + (7 + 9 + 4 + 8) * (6 + 8 + 2) + 8) * 7\n" +
+                "5 + (8 * 4) + 5 * 2 * (2 + (9 * 2) * 5)\n" +
+                "7 + (4 * 4 * 9 + 6) + 9 + 2\n" +
+                "((4 * 4 + 5) + 7 + 2 * 8 * 8 * 7) * 8 * (2 + 7 + 8 + 3)\n" +
+                "(9 * 4 * 5) + 5\n" +
+                "7 * 3 * (4 * 2 + 4) * 9 * (6 + 8 + 9 * (8 * 9 * 8) + 5)\n" +
+                "2 * 5 + 6 * ((3 + 8 + 3 * 3 * 6) + 3) * 4\n" +
+                "6 * 4 * 8 + 5 + (9 + 2 * (6 + 4 * 4 * 4 + 9)) * 6\n" +
+                "(8 + (3 + 3 + 3 * 4) + 8 * 7 + 3) + (7 + 3) + (5 + 3 * 8) * (7 + (3 + 8 + 2 * 7 * 7)) * 3\n" +
+                "3 + 4 + 7 + 2\n" +
+                "3 + 5\n" +
+                "7 * (5 * 9 * 3) + 6 * 3\n" +
+                "6 * (3 + (7 + 9 + 7 + 7) * 2 + 8 * 2) + 4 + 9 * 6 + 9\n" +
+                "(6 * 8) * 5 + 2 * 6\n" +
+                "6 + 3 + 2 + 8\n" +
+                "5 + 4 + 7 * 5 + ((2 + 5 * 3 * 8 + 5 + 9) * 3)\n" +
+                "3 * 2 + 7 + 2\n" +
+                "9 * 6 * 5 + (3 * 6 * (3 * 5 + 4)) * 7 * 7\n" +
+                "(9 + 7 * 7 + 9 * 7) + (2 * 2 + 4)\n" +
+                "8 * 8 * ((3 + 8 + 5) + (4 * 7 + 9) * 7 * (8 * 7 + 9)) + 3\n" +
+                "3 + 9 + 4 + (9 * 6 * (4 * 8 + 3))\n" +
+                "((7 * 9 + 3) * (7 + 5 + 9 * 3 + 4)) + 2\n" +
+                "8 * (9 + 2) * ((5 + 4 * 7) + (7 + 7 * 5 * 8 + 6) * 8)\n" +
+                "(8 + 4 + 3) + 3 + (3 + 2 * 3 + (6 * 6 + 4 + 3 * 3 * 2)) + 4 + 4\n" +
+                "3 + 6 + 3 + 2 + 2\n" +
+                "8 + (8 * 8 + 5 + 9 * (4 + 5 + 9 * 2) + 6)\n" +
+                "6 + 3\n" +
+                "2 + 7 * (5 + 2 * 8 + 4 + (3 + 8 * 6 + 6 * 8) * 2) * 9 + (8 + 8 * 3 * 7 + 2 + (4 * 5 * 4 * 2)) * (8 + 7)\n" +
+                "8 + (6 * 4 + 7) * 5 + (5 + 9 + (6 * 4 + 9 + 6 + 8) * 5) + 9\n" +
+                "8 * (2 * 8 + 4) * (3 * (8 + 6 * 8)) + 4 * 2 * (5 + 4 + (7 * 7 * 6 * 6 * 8 + 4) * 2 * 7)\n" +
+                "((7 * 4) + (9 + 6 + 7)) + 3 + 8 * 7 * 4 * 7\n" +
+                "6 * 4 + (5 + 2 + (5 * 5 * 2 + 6 + 7) + 7 * 3) + (3 * 2) * 4\n" +
+                "6 * 2 * 3 * (3 * (8 * 2 + 5) * (8 * 7 * 2 + 4 * 8) + 8 + (8 * 2) * 2) * 9\n" +
+                "5 + 6 * 2 + (2 + 2 + 7 + 8 * 6 * 6) * 3\n" +
+                "7 * 2 * 5 * 8 + (2 * 4 + 7 * 3 * 4) + 3\n" +
+                "8 + 8 * ((8 + 5 * 2) + 3 + (8 * 8) + 6 + 6 + 6)\n" +
+                "(3 + 2 * 2 + 2 + 3) * ((7 + 3) * 8) + 9 * 3 + 2\n" +
+                "6 + 4 * (5 * (2 + 3 * 9 + 4 + 4) + 7 * 8 + 2 * 8) * 7 * 9 * 6\n" +
+                "7 * (3 * (9 + 9 * 3) + 7 * 8 + 9)\n" +
+                "8 + 5 + 4 * ((2 + 6 + 5 + 9 + 9) * 7) + 4 * 5\n" +
+                "5 + (3 * 3) * 7 + 7 * 9 * 8\n" +
+                "2 + 3 + (4 + 9 * 7 + 8 + 7 * 3) + (3 + 4 * 5 * 6 * 8 + 8) + 6 + ((6 * 4 + 8 * 6) + 5)\n" +
+                "2 + (5 + 5 + (3 + 5 * 9 + 5 + 3) * (7 * 5 + 3) + (9 + 6 + 2 * 8 * 8 + 5) + 6) + 2 * 4\n" +
+                "(3 + 5) + 4 * ((3 + 4) + 8 + 7) + ((6 + 3 + 6) * 4 * 5 + 3 + 6) * ((3 * 8 + 9) + (5 * 7 + 3) + 3 + 2 + 2)\n" +
+                "6 + (9 * (5 * 7 * 6) * (6 * 4 * 7 + 6) + 4 + 8) + 6 * 8\n" +
+                "5 + (6 * 4 * 7 + 5 * 6 * (8 + 7 * 5 + 6 * 7 * 8)) * 7\n" +
+                "5 + (6 + 4) + (5 * 4)\n" +
+                "7 + (7 + 3 + 8 + (6 + 7 + 2 * 4)) * 3 + 2 * 6\n" +
+                "6 * (3 * (4 * 7) + 8) * 6 * (2 * 6 * 3)\n" +
+                "((6 + 5 + 3) + (7 * 8)) * 3\n" +
+                "9 * ((6 + 5 + 5 + 8 + 4) * 5) * (6 * 4 + (8 + 7 * 2 * 3 * 6 + 6)) * 4 * 9 + 2\n" +
+                "(3 + (6 + 5 + 7 * 4 * 7 + 5)) * (4 + 4 + 7 + (2 + 3) * 2) + 8 + 6 * 4 + 5\n" +
+                "(4 + (4 * 7) + 9 * 5 + 2 * 3) + 7 * ((4 * 9 * 8 + 8 + 9) + 5 * 4 + 3 * 2 * 4)\n" +
+                "(7 + 2) * 7 * 7 * 4 * (9 * 6) + 9\n" +
+                "9 * 2 * 4 * (2 * 5 * 7)\n" +
+                "2 * 7 * (3 * 8 + 4 + 6 * 9 + 5)\n" +
+                "((2 + 5) * 5 * 9 * 8 * 8 + 5) + 6 + (5 + (6 + 8 * 8 + 3 * 2 * 7) * 6) * 9 + 2\n" +
+                "(3 + 5 * 9 + 7 * 9) + 5 * (9 * 8 * 5 * 3 * 8 + 8) * 2 + 5 * 3\n" +
+                "(7 + 6 * 2 + 9 * 9) * 2\n" +
+                "4 * 7 + 7 + (5 + 3 + 3 * (4 + 2 * 3 * 6 + 2 + 4) * (5 * 8 * 6 * 4 * 5) + 3) + (5 + 3 * 6) + 5\n" +
+                "3 + 7 + 5 + 9 + ((4 * 5 + 2) + 5 + 6 * 9) * 5\n" +
+                "7 * (3 + 7 * 9 * 6) * 2 * 4 * (3 * (6 + 3 + 3) * 4 * 9 * 2) + 7\n" +
+                "(9 + 6 + 6 * 3 * (8 * 8 * 3)) * 6 * 4 * 7 * 6 * 2\n" +
+                "(6 + 3 * 5 * 7) * 3 + 8\n" +
+                "4 + (3 + (5 + 7 + 7 + 8 * 6 + 4))\n" +
+                "3 * ((4 + 2 * 3 + 9 + 3) * 5 + 8) + 4 * (4 + 4) + 2 + 9\n" +
+                "6 + ((3 + 3 + 7 + 9 * 9 * 7) * 5 * 6 + 4 + 5 * 4) * 6 + ((4 + 5) + 6 * 4 + 3 + 7) + (5 + (2 + 3))\n" +
+                "2 * ((4 + 6 + 2 + 7 + 7) * 4 + 9)\n" +
+                "(5 + 3 + 8) + 6 * 6 * 6\n" +
+                "6 + 6 * ((6 + 6) + 8 * 4 + 6 + 3 + 7) + 5 * 6 + 6\n" +
+                "5 * 8 + (9 * (5 + 5 * 2 * 9 + 5 * 3) * 2 * 9 + 4) * 2\n" +
+                "4 * 5 + 8 * (7 * (5 * 9 * 7 + 4) + 3) + 9 + 7\n" +
+                "2 * 8 * (6 * 9 * (4 * 6 * 8 + 5) + 4 * 4 * 8) * 6 * 6 * 8\n" +
+                "9 * 7 + 4 + (4 + 3 * 8 * 5) * (4 * 5 * 5 + 7 + 6)\n" +
+                "4 * (6 * 3 + 8 + 3 * 5) * 2 + 7 * 5\n" +
+                "(4 * 2 + (9 * 3 + 9 + 4 + 2 * 5)) * (7 * 7 * 4 * 7 * 7 * 4) + 3 + 9 * 8 * (9 * 8)\n" +
+                "5 * (9 * (7 + 2 + 8 + 5 + 7) * 8) * 7 * (6 * 4 + 4 + 9 + (9 * 9 + 2) + 7) * (3 + 8) * 2\n" +
+                "2 * (6 * 7 * 2 + 7) * 5\n" +
+                "6 + 9 + 2 * (9 * 2)\n" +
+                "((7 * 2 + 8 * 3 * 6) * 5 + 6) * 8\n" +
+                "(3 * 6 + 8 * 2 + 3 + 8) * 6 + 7\n" +
+                "2 + (9 * 7 + (4 + 9 + 6 * 8 + 6) + 2 + 3 + 4) + 6 * 8 + 4\n" +
+                "(8 * 6 * 8 + 4 + 3) * (8 + 4)\n" +
+                "(3 + 2 + 5 + (2 + 9 + 2 * 2 * 5 * 9) * 2) * (7 + 5 + 6 * 6 * 9)\n" +
+                "7 + 3 + 4 + 7 * (8 + 5 * 2) + 3\n" +
+                "(8 * (8 + 2 * 3 * 7 * 7 * 8) + 7) + 5 + ((2 * 7 + 9 * 9) + 5 * (6 * 7 + 2 * 8 * 5) * 7 * 4 + 5) * 2 * (5 + 9 * 7 + 8) + (5 + (8 * 7 * 7 * 7 + 3 * 3) + (5 + 4 * 3 + 4) + 6 * 6)\n" +
+                "9 + 4 * (9 + 3 + 3) * (7 + 7 * 4 * 4 + 9 * (3 + 5 * 7)) + 7 * 4\n" +
+                "3 * 6 + (4 * 3 * 5 * 8) * (9 * 2 * (2 + 6 + 4))\n" +
+                "4 * (8 + (8 + 6) * 4 * 7)\n" +
+                "(6 * 6 + 6 + 4) * 8 + 5 * (9 + (8 + 3 + 2 + 5 * 8 + 3)) * (9 + (8 + 9 * 4) + 7) + 5\n" +
+                "6 * 3 * 7 * 2 + (6 * 2 + (4 + 4 + 2 + 7 * 8 * 2))\n" +
+                "(5 * 6) * (9 + 6 + 3 * 6 * 4 * 3) + (8 * 7 + 5)\n" +
+                "4 * 2 + 3 * ((9 * 3 * 8 * 3 * 7 * 2) + 6 * 3 * (9 * 7 * 9 + 6 * 5) * 4 + 7) + 3 + (2 + 9 * 3 * 9 + (7 + 7 * 3 + 4))\n" +
+                "((5 * 2) + (6 * 5 * 4) + 9 + 4 * 7 + 7) * 8\n" +
+                "2 * 8 + (7 * 2 + 6 + 8)\n" +
+                "9 * 4 * 7 * 7 * (2 * (7 * 7 * 8 + 9) + 6 * 5 * (4 + 8 + 5 + 3)) + 8\n" +
+                "2 * 8 + 4 + 2 * 2 * (7 + 4 * (4 + 9) + 6 * 4 + 5)\n" +
+                "9 + 4 + 3 * (7 * 7 + 9 * 8 * 5 * (3 + 2 * 5 * 6)) + 8\n" +
+                "4 * 8 * (6 * (6 + 7 + 9 * 3 * 5)) * 4 * 8 + 3\n" +
+                "4 * 7 + (7 + 4 * (6 * 7)) * (7 + 7 + 6 + (2 + 9 + 6 + 5) + 6) * (8 * 2) + 3\n" +
+                "(6 + 8 * 8 * 4) * 2 + 2 * 9\n" +
+                "8 * (9 * 7 * 5 + (9 + 8 * 4)) * 9 + (9 * 9 * (3 * 8 + 4) * 9)\n" +
+                "(7 + 4 + 6 * (5 * 3)) * 5 * 8";
     }
 
     public static void main(String[] args) {
-        // input as rules, ticket numbers and some scanned tickets
-        // what numbers in tickets match no rules at all -> find invalid ones
+        String[] arg = input().split("\n");
+        System.out.println(arg.length);
+        BigInteger sum = BigInteger.ZERO;
+        StringBuilder result = new StringBuilder();
+        BigInteger k = BigInteger.valueOf(8 * 2 + 323616384 * 9);
+        System.out.println(k);
+        for(int i = 0; i < arg.length; i++) {
+            System.out.println(i);
 
-        String[] arg = input().split("\n\n");
-        String[] fields = arg[0].split("\n"); // regex -> departure location: 45-535 or 550-961
-
-        // Reading rules
-        List<Field> fieldList = new LinkedList<>();
-        extractInfoWithPattern(fields, fieldList);
-//        fieldList.forEach(Field::printField);
-
-        // Reading my ticket
-        String[] myTicketRead = arg[1].split("\n");
-        String[] numbersOnTicket = myTicketRead[1].split(",");
-        Ticket myTicket = new Ticket(myTicketRead[0], extractNumbersOnTicket(numbersOnTicket));
-//        myTicket.printTicket();
-
-        // Reading other tickets
-        String[] nearbyTicketRead = arg[2].split("\n");
-        List<Ticket> nearbyTickets = new LinkedList<>();
-        for(int i = 1; i < nearbyTicketRead.length; i++) {
-//            System.out.println("Iteration " + i);
-            String[] numbersOnNearbyTicket = nearbyTicketRead[i].split(",");
-            Ticket nearbyTicket = new Ticket(nearbyTicketRead[0], extractNumbersOnTicket(numbersOnNearbyTicket));
-            nearbyTickets.add(nearbyTicket);
-        }
-
-        // Looking for numbers that dont match any rule at all
-        List<Ticket> validTickets = getListOfValidTickets(fieldList, nearbyTickets, myTicket);
-//        validTickets.forEach(Ticket::printTicket);
-        List<Pair> matches = new LinkedList();
-
-        for (int i = 0; i < myTicket.getNumbersOnTicket().size(); i++) {
-
-            for (Field rule : fieldList) {
-                boolean valid = true;
-                for (Ticket ticket : validTickets) {
-                    if(!matchRule(rule, ticket.getNumbersOnTicket().get(i))) {
-                        valid = false;
-                        break;
-                    }
-                }
-                if(valid) {
-                    Pair container = new Pair(rule, i);
-                    matches.add(container);
-                }
+            try {
+                // ovu funkciju cu pozivati za ono sto je u zagradama
+                // onda cu dio sa zagradama zamijeniti sa rezultatom koji se dobije sa solve
+                // tako cu se rijesiti zagrada i ostatak rijesiti s lijeva na desno
+//                System.out.println(solveWithParenthesis(arg[i]));
+                result.append(solveWithParenthesis(arg[i]));
+                if(i != arg.length - 1)
+                    result.append("+");
+            } catch (ScriptException e) {
+                e.printStackTrace();
             }
-        }
-//        for (Pair match : matches) match.printPair();
-        System.out.println("ULAZIM");
-        while(matches.size() > fieldList.size()) {
-            System.out.println("LOOP");
-            // da matches size bude kao field jer je tako svakom rule dodjeljen number
-            for (int i = 0; i < myTicket.getNumbersOnTicket().size(); i++) {
-                int ind = i;
-                List<Pair> rulesMatchingCurrentIndex = matches.stream().filter(m -> m.index == ind).collect(Collectors.toList());
-                if(rulesMatchingCurrentIndex.size() == 1) {
-                    //znaci za neko pravilo je jedno poklapanje
-                    // uklanjam ostala ponavljanja tog pravila
-//                    for (Pair match : matches) match.printPair();
-                    Pair currentRule = rulesMatchingCurrentIndex.get(0);
-                    matches = matches.stream().filter(m -> {
-                        if(m.getField() == currentRule.getField()) {
-                            //pronadji gdje se ponavlja pravilo, ako to nijr taj indeks
-                            // vratit ce false i to vise nece biti u matches, za ostale field nece biti isti, pa se nece izbaciti
-                            return m.getIndex() == currentRule.getIndex();
-                        }
-                        return true;
-                    }).collect(Collectors.toList());
-                }
-            }
-        }
-
-        // Print result
-        List<Pair> departureFields = matches.stream().filter(m -> m.getField().getType().startsWith("departure")).collect(Collectors.toList());
-
-        int result = 1;
-        for (Pair field : departureFields) {
-            result *= myTicket.getNumbersOnTicket().get(field.getIndex());
         }
         System.out.println(result);
-
     }
 
-    private static List<Ticket> getListOfValidTickets(List<Field> fieldList, List<Ticket> nearbyTickets, Ticket myTicket) {
-        boolean valid = true;
-        List<Ticket> validTickets = new LinkedList<>();
-        validTickets.add(myTicket);
-        for (Ticket nearbyTicket : nearbyTickets) {
-            for (Integer number : nearbyTicket.getNumbersOnTicket()) {
-                if(!matchAtLeastOneRule(number, fieldList)) {
-                    valid = false;
-                    break;
-                }
+    private static String solve(String s) throws ScriptException {
+        List<String> tokens = new LinkedList<>(Arrays.asList(s.split(" ")));
+//        tokens.forEach(System.out::println);
+
+        // importing this so that i can use js strings and eval function
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("js");
+
+        // joining strings in one and then I send that to eval to calculate result
+        // eval function does operations with string "1+2" will be "3"
+        while (tokens.size() > 1) {
+//            System.out.println("Later");
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String string : tokens.subList(0, 3)) {
+                stringBuilder.append(string);
             }
-            if(valid)
-                validTickets.add(nearbyTicket);
+            String result = String.valueOf(engine.eval(stringBuilder.toString()));
+            tokens = tokens.subList(3, tokens.size());
+            tokens.add(0, result);
+
+//            tokens.forEach(System.out::println);
         }
-        return validTickets;
+        return tokens.get(0);
     }
 
-    private static List<Integer> extractNumbersOnTicket(String[] numbersOnTicket) {
-        List<Integer> numbersOnTicketList = new LinkedList<>();
-        for(int i = 0; i < numbersOnTicket.length; i++)
-            numbersOnTicketList.add(Integer.parseInt(numbersOnTicket[i]));
-        return numbersOnTicketList;
-    }
+    private static String solveWithParenthesis(String string) throws ScriptException {
+        //while there is paranthesis, do while and replace that with solution
+        Pattern pattern = Pattern.compile("\\(");
+        Matcher matcher = pattern.matcher(string);
+        matcher.matches();
 
-    private static void extractInfoWithPattern(String[] fields, List<Field> fieldList) {
-        Pattern p = Pattern.compile("([^:]+): (\\d+)-(\\d+) or (\\d+)-(\\d+)");
-        for(int i = 0; i < fields.length; i++) {
-            Matcher m = p.matcher(fields[i]);
-            if(m.find()) {
-                Field field = new Field(m.group(1), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4)), Integer.parseInt(m.group(5)));
-                fieldList.add(field);
+        while (matcher.find()) {
+//            System.out.println("HEHE");
+//          // [^()] means except ()
+//          // so next pattern means to find expression without inner brackets
+            Pattern pattern2 = Pattern.compile("\\(([^()]+)\\)");
+            Matcher matcher2 = pattern2.matcher(string);
+            matcher2.matches();
+            while(matcher2.find()) {
+                string = string.replace(matcher2.group(0), solve(matcher2.group(1)));
+//                System.out.println("F: " + string);
             }
+//                System.out.println(string);
         }
-    }
-
-    private static boolean matchRule(Field rule, int value) {
-        return (value >= rule.from_1 && value <= rule.to_1) || (value >= rule.from_2 && value <= rule.to_2);
-    }
-
-    private static boolean matchAtLeastOneRule(int value, List<Field> rules) {
-        for (Field rule : rules) {
-            if(matchRule(rule, value)) {
-                // we need numbers that dont match any rule at all
-                return true;
-            }
-        }
-        return false;
+        System.out.println(string);
+        System.out.println(solve(string));
+        return solve(string);
     }
 }
